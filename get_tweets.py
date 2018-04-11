@@ -28,16 +28,16 @@ def get_tweets(twitter, account, N, start_date=None, end_date=None):
         last = 0
     else:
         iteration, last = divmod(N, max_per_request)
-    user_timeline = twitter.user_timeline(screen_name =account, count=1)
+    user_timeline = twitter.user_timeline(screen_name =account, count=1, include_rts=False, tweet_mode="extended")
     if (user_timeline):
         for i in range(iteration+1):
             lastTweetId = int(user_timeline[-1].id_str)
-            user_timeline = twitter.user_timeline(screen_name = account, max_id = lastTweetId, count = max_per_request)
+            user_timeline = twitter.user_timeline(screen_name = account, max_id = lastTweetId, count = max_per_request, include_rts=False, tweet_mode="extended")
             for tweets in user_timeline:
                 if (tweets.lang == None):
                     tweets.lang = detect(tweets.text.replace("\n", " "))
                 if (tweets.lang in languages):
-                    d = {'id_user': tweets.user.id_str, 'screen_name': tweets.user.screen_name.lower(), 'text': tweets.text, 'lang':tweets.lang, 'favourite_count': tweets.favorite_count, 'retweet_count': tweets.retweet_count, 'create_at': tweets.created_at.strftime("%Y-%m-%d %H:%M:%S"), 'mentions': tweets.entities['user_mentions'], '_id':tweets.id_str, 'coordinates':tweets.coordinates}
+                    d = {'id_user': tweets.user.id_str, 'screen_name': tweets.user.screen_name.lower(), 'text': tweets.full_text, 'lang':tweets.lang, 'favourite_count': tweets.favorite_count, 'retweet_count': tweets.retweet_count, 'create_at': tweets.created_at.strftime("%Y-%m-%d %H:%M:%S"), 'mentions': tweets.entities['user_mentions'], '_id':tweets.id_str, 'coordinates':tweets.coordinates}
                     user_tweets.append(d)
             if i != iteration:
                 user_tweets = user_tweets[:len(user_tweets)-1]
@@ -47,7 +47,7 @@ def get_tweets(twitter, account, N, start_date=None, end_date=None):
         print('no tweets')
     print(account, len(user_tweets))
 
-return user_tweets[:N]
+    return user_tweets[:N]
 
 def get_tweets_from_users(file_users, twitter):
     users = csv.reader(open(file_users,'r'))

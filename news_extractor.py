@@ -28,8 +28,8 @@ def get_users_from_news(news, twitter, N=None):
         users.append(status.user.screen_name)
     return users
 
-def save_users(users, news, name_file):
-    file = csv.writer(open(name_file+'.csv','w'))
+def save_users(users, name_file):
+    file = csv.writer(open(name_file,'w'))
     for user in users:
         file.writerow([user])
 
@@ -59,7 +59,7 @@ def main():
             name_file = a
     users = get_users_from_news(news, twitter, N)
 
-    save_users(users, news, name_file)
+    save_users(users, name_file)
 
 if __name__ == "__main__":
     main()
